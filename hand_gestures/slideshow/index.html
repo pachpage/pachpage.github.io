@@ -1,0 +1,186 @@
+<html dir="ltr" lang="en-US">
+    <head>
+        <title>Slideshow Viewer</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="demo-viewer.css" media="screen"/>
+        <script src="webodf.js" type="text/javascript" charset="utf-8"></script>
+        <script src="gest.js" type="text/javascript"></script>
+        <script src="demo-viewer.js" type="text/javascript" charset="utf-8"></script>
+        <style type="text/css">
+		#drop_zone {
+			border: 2px dashed #bbb;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			border-radius: 5px;
+			padding: 25px;
+			text-align: center;
+			vertical-align: middle;
+			font: 20pt bold 'Vollkorn';
+			color: #bbb;
+			background-color: white;
+			position: absolute;
+			z-index: 500;
+			width: 100%;
+			height: 100%;
+		}
+		.custom-file-input::-webkit-file-upload-button {
+			visibility: hidden;
+		}
+		.custom-file-input::before {
+			color: black;
+			content: 'or choose a file';
+			display: inline-block;
+			background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+			border: 1px solid #999;
+			border-radius: 3px;
+			padding: 5px 8px;
+			outline: none;
+			white-space: nowrap;
+			-webkit-user-select: none;
+			cursor: pointer;
+			text-shadow: 1px 1px #fff;
+			font-weight: 400;
+			font-size: 1.8em;
+		}
+		.custom-file-input:hover::before {
+			border-color: black;
+		}
+		.custom-file-input:active::before {
+			background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+		}
+		</style>
+    </head>
+
+    <body onload="">
+        <div id = "viewer">
+            <div id = "titlebar">
+                <div id = "toolbarLeft">
+                    <div id = "navButtons" class = "splitToolbarButton">
+                        <button id = "previous" class = "toolbarButton pageUp" title = "Previous Slide"></button>
+                        <div class="splitToolbarButtonSeparator"></div>
+                        <button id = "next" class = "toolbarButton pageDown" title = "Next Slide"></button>
+                        <div class="splitToolbarButtonSeparator"></div>
+                        <button id = "fullscreen" class = "toolbarButton fullscreen" title = "Fullscreen" onclick="toggleFL();"></button>
+                    </div>
+                    <label id = "pageNumberLabel" class = "toolbarLabel" for = "pageNumber">Slide:</label>
+                    <input type = "number" id = "pageNumber" class = "toolbarField pageNumber"/>
+                    <span id = "numPages" class = "toolbarLabel"></span>
+                </div>
+                <div id = "toolbarRight">
+                    <button id = "download" class = "toolbarButton download" title = "Download" style="display:none;"></button>
+                </div>
+            </div>
+            <div id = "toolbarContainer">
+                <div id = "toolbar">
+                    <div id = "toolbarMiddleContainer" class = "outerCenter">
+                        <div id = "toolbarMiddle" class = "innerCenter">
+                            <div id = 'zoomButtons' class = "splitToolbarButton">
+                                <button id = "zoomOut" class = "toolbarButton zoomOut" title = "Zoom Out"></button>
+                                <div class="splitToolbarButtonSeparator"></div>
+                                <button id = "zoomIn" class = "toolbarButton zoomIn" title = "Zoom In"></button>
+                            </div>
+                            <span id="scaleSelectContainer" class="dropdownToolbarButton">
+                                <select id="scaleSelect" title="Zoom" oncontextmenu="return false;">
+                                    <option id="pageAutoOption" value="auto" selected>Automatic</option>
+                                    <option id="pageActualOption" value="page-actual">Actual Size</option>
+                                    <option id="pageWidthOption" value="page-width">Full Width</option>
+                                    <option id="customScaleOption" value="custom"></option>
+                                    <option value="0.5">50%</option>
+                                    <option value="0.75">75%</option>
+                                    <option value="1">100%</option>
+                                    <option value="1.25">125%</option>
+                                    <option value="1.5">150%</option>
+                                    <option value="2">200%</option>
+                                </select>
+                            </span>
+                            <div id = "sliderContainer">
+                                <div id = "slider"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id = "canvasContainer">
+                <div id = "canvas"></div>
+            </div>
+            <div id = "overlayNavigator">
+                <div id = "previousPage"></div>
+                <div id = "nextPage"></div>
+            </div>
+            <div id = "overlayCloseButton">
+            &#10006;
+            </div>
+        </div>
+        <div id="drop_zone">
+        	Drop an ODP (OpenDocument Presentation) file here
+        	<br/><br/>
+        	<input type="file" onchange="handleFileSelect(event);" class="custom-file-input" accept="application/vnd.oasis.opendocument.presentation,application/x-vnd.oasis.opendocument.presentation,.odp"/>
+        </div>
+		<script>
+			function handleFileSelect(evt) {
+			    evt.stopPropagation();
+			    evt.preventDefault();
+
+			    var files = evt.dataTransfer || evt.target;
+			    var file = files.files[0] || files.files[0];
+			    if (file.name.split(".").splice(-1)[0] == "odp") {
+			        window.URL = window.URL || window.webkitURL || window.mozURL;
+			        document.getElementById("drop_zone").style.display = "none";
+			        var theSlideshow = URL.createObjectURL(file);
+			        //loadDocument('slideshow.odp');
+			        loadDocument(theSlideshow);
+			        gest.start();
+			    }
+
+			}
+
+			function handleDragOver(evt) {
+			    evt.stopPropagation();
+			    evt.preventDefault();
+			    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+			}
+
+			// Setup the dnd listeners.
+			var dropZone = document.getElementById('drop_zone');
+			dropZone.addEventListener('dragover', handleDragOver, false);
+			dropZone.addEventListener('drop', handleFileSelect, false);
+			
+			document.addEventListener('gest', function(gesture) {
+			    if (gesture.left) {
+			        document.querySelector("#next").click();
+			    } else if (gesture.right) {
+			        document.querySelector("#previous").click();
+			    }
+			}, false);
+			
+			
+			function toggleFL() {
+			    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+			        if (document.exitFullscreen) {
+			            document.exitFullscreen();
+			        } else if (document.webkitExitFullscreen) {
+			            document.webkitExitFullscreen();
+			        } else if (document.mozCancelFullScreen) {
+			            document.mozCancelFullScreen();
+			        } else if (document.msExitFullscreen) {
+			            document.msExitFullscreen();
+			        }
+			    } else {
+			        var docElm = document.documentElement;
+			        if (docElm.requestFullscreen) {
+			            docElm.requestFullscreen();
+			        } else if (docElm.mozRequestFullScreen) {
+			            docElm.mozRequestFullScreen();
+			        } else if (docElm.webkitRequestFullScreen) {
+			            docElm.webkitRequestFullScreen();
+			        } else if (docElm.msRequestFullscreen) {
+			            docElm.msRequestFullscreen();
+			        }
+			    }
+			}
+
+
+		</script>
+    </body>
+</html>

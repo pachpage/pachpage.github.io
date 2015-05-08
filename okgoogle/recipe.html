@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Recipe</title>
+	<style>
+		body {
+			font-family: sans-serif;
+		}
+		button {
+			font-weight: bold;
+			font-size: 11pt;
+		}
+		textarea {
+			width: 80%;
+			height: 300px;
+			font-size: 11pt;
+		}
+	</style>
+</head>
+<body>
+	<button id="startRecBtn">Start Recognition</button>
+	<button id="stopRecBtn">Stop Recognition</button>
+	<h2 id="msg"></h2>
+	<textarea id="txt" placeholder="Enter recipe here"></textarea>
+	
+	<script>
+		var currentStep = 0;
+		var steps = [];
+		var div = document.getElementById('msg');
+		var txt = document.getElementById('txt');
+		function step(){
+			var msg = new SpeechSynthesisUtterance(steps[currentStep]);
+			window.speechSynthesis.speak(msg);
+			div.innerHTML = steps[currentStep];
+		}
+		function update(){
+			steps = txt.value.split("\n");
+		}
+		
+		var startRecBtn = document.getElementById('startRecBtn');
+		var stopRecBtn = document.getElementById('stopRecBtn');
+
+		// Define a new speech recognition instance
+		var rec = new webkitSpeechRecognition();
+		if (rec) {
+		    rec.continuous = true;
+		    rec.interimResults = false;
+		    rec.lang = 'en';
+
+		    // Define a threshold above which we are confident(!) that the recognition results are worth looking at 
+		    var confidenceThreshold = 0.5;
+
+		    // Simple function that checks existence of s in str
+		    var userSaid = function(str, s) {
+		            return str.toLowerCase().indexOf(s.toLowerCase()) > -1;
+		        }
+
+		        // Process the results when they are returned from the recognizer
+		        rec.onresult = function(e) {
+		            // Check each result starting from the last one
+		            for (var i = e.resultIndex; i < e.results.length; ++i) {
+		                // If this is a final result
+		                if (e.results[i].isFinal) {
+		                    // If the result is equal to or greater than the required threshold
+		                    if (parseFloat(e.results[i][0].confidence) >= parseFloat(confidenceThreshold)) {
+		                        var str = e.results[i][0].transcript;
+		                        console.log('Recognized: ' + str);
+		                        // If the user said 'video' then parse it further
+		                        if (userSaid(str, 'ok google') || userSaid(str, 'okay google')) {
+		                            if (userSaid(str, 'next step')) {
+		                                currentStep++;
+		                                step();
+		                            }
+		                            else if (userSaid(str, 'previous step')) {
+		                                currentStep -= 1;
+		                                step();
+		                            }
+		                        }
+		                    }
+		                }
+		            }
+		        };
+
+		    // Start speech recognition
+		    var startRec = function() {
+		            rec.start();
+		            update();
+		            step();
+		        }
+		        // Stop speech recognition
+		    var stopRec = function() {
+		            rec.stop();
+		        }
+		        // Setup listeners for the start and stop recognition buttons
+		        startRecBtn.addEventListener('click', startRec, false);
+		    stopRecBtn.addEventListener('click', stopRec, false);
+		}
+	</script>
+</body>
+</html>

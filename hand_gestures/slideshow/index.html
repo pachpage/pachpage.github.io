@@ -156,7 +156,7 @@
 			
 			function toggleCamera() {
 			    cameraToggle = !cameraToggle;
-			    document.querySelector("#camera").title = (cameraToggle ? "Turn webcam on" : "Turn webcam off");
+			    document.querySelector("#camera")setAttribute("title",micToggle ? "Turn webcam on" : "Turn webcam off");
 			}
 			
 			document.addEventListener('gest', function(gesture) {
@@ -181,7 +181,7 @@
 				micToggle = !micToggle;
 				if (micToggle) okgoogle.start();
 				if (!micToggle) okgoogle.stop();
-				document.querySelector("#mic").title = (micToggle ? "Turn microphone on" : "Turn microphone off");
+				document.querySelector("#mic").setAttribute("title",micToggle ? "Turn microphone on" : "Turn microphone off");
 			}
 			
 			

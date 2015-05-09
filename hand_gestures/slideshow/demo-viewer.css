@@ -483,6 +483,16 @@ html[dir='rtl'] .dropdownToolbarButton {
     content: url(images/toolbarButton-fullscreen.png);
 }
 
+.toolbarButton.camera::before {
+    display: inline-block;
+    content: url(images/toolbarButton-camera.png);
+}
+
+.toolbarButton.mic::before {
+    display: inline-block;
+    content: url(images/toolbarButton-mic.png);
+}
+
 .toolbarButton.presentation::before {
     display: inline-block;
     content: url(images/toolbarButton-presentation.png);

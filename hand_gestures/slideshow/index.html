@@ -63,6 +63,10 @@
                         <button id = "next" class = "toolbarButton pageDown" title = "Next Slide"></button>
                         <div class="splitToolbarButtonSeparator"></div>
                         <button id = "fullscreen" class = "toolbarButton fullscreen" title = "Fullscreen" onclick="toggleFL();"></button>
+                        <div class="splitToolbarButtonSeparator"></div>
+                        <button id = "camera" class = "toolbarButton camera" title = "Camera" onclick="toggleCamera();"></button>
+                        <div class="splitToolbarButtonSeparator"></div>
+                        <button id = "mic" class = "toolbarButton mic" title = "Microphone" onclick="toggleMic();"></button>
                     </div>
                     <label id = "pageNumberLabel" class = "toolbarLabel" for = "pageNumber">Slide:</label>
                     <input type = "number" id = "pageNumber" class = "toolbarField pageNumber"/>
@@ -119,6 +123,9 @@
         	<input type="file" onchange="handleFileSelect(event);" class="custom-file-input" accept="application/vnd.oasis.opendocument.presentation,application/x-vnd.oasis.opendocument.presentation,.odp"/>
         </div>
 		<script>
+			var cameraToggle = false;
+			var micToggle = false;
+			
 			function handleFileSelect(evt) {
 			    evt.stopPropagation();
 			    evt.preventDefault();
@@ -147,12 +154,18 @@
 			dropZone.addEventListener('dragover', handleDragOver, false);
 			dropZone.addEventListener('drop', handleFileSelect, false);
 			
+			function toggleFL() {
+			    cameraToggle = !cameraToggle;
+			}
+			
 			document.addEventListener('gest', function(gesture) {
-			    if (gesture.left) {
-			        document.querySelector("#next").click();
-			    } else if (gesture.right) {
-			        document.querySelector("#previous").click();
-			    }
+				if (cameraToggle){
+			    		if (gesture.left) {
+					     document.querySelector("#next").click();
+					 } else if (gesture.right) {
+					     document.querySelector("#previous").click();
+					 }
+				}
 			}, false);
 			
 			var okgoogle = new OKGoogle();
@@ -163,7 +176,11 @@
 					document.querySelector("#previous").click();
 				}
 			});
-			okgoogle.start();
+			function toggleMic(){
+				micToggle = !micToggle;
+				if (micToggle) okgoogle.start();
+				if (!micToggle) okgoogle.stop();
+			}
 			
 			
 			function toggleFL() {

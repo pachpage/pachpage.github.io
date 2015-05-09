@@ -64,9 +64,9 @@
                         <div class="splitToolbarButtonSeparator"></div>
                         <button id = "fullscreen" class = "toolbarButton fullscreen" title = "Fullscreen" onclick="toggleFL();"></button>
                         <div class="splitToolbarButtonSeparator"></div>
-                        <button id = "camera" class = "toolbarButton camera" title = "Camera" onclick="toggleCamera();"></button>
+                        <button id = "camera" class = "toolbarButton camera" title = "Turn webcam on" onclick="toggleCamera();"></button>
                         <div class="splitToolbarButtonSeparator"></div>
-                        <button id = "mic" class = "toolbarButton mic" title = "Microphone" onclick="toggleMic();"></button>
+                        <button id = "mic" class = "toolbarButton mic" title = "Turn microphone on" onclick="toggleMic();"></button>
                     </div>
                     <label id = "pageNumberLabel" class = "toolbarLabel" for = "pageNumber">Slide:</label>
                     <input type = "number" id = "pageNumber" class = "toolbarField pageNumber"/>
@@ -156,6 +156,7 @@
 			
 			function toggleCamera() {
 			    cameraToggle = !cameraToggle;
+			    document.querySelector("#camera").title = (cameraToggle ? "Turn webcam on" : "Turn webcam off");
 			}
 			
 			document.addEventListener('gest', function(gesture) {
@@ -180,6 +181,7 @@
 				micToggle = !micToggle;
 				if (micToggle) okgoogle.start();
 				if (!micToggle) okgoogle.stop();
+				document.querySelector("#mic").title = (micToggle ? "Turn microphone on" : "Turn microphone off");
 			}
 			
 			

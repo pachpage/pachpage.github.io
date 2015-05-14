@@ -16,7 +16,7 @@ javascript:if(location.href.substring(4,5)=='s'){location.href='dolphin://'+loca
 ```
 ### Mercury
 ```javascript
-
+javascript:window.location='merc://'+escape(window.location);
 ```
 ### Opera Mini
 ```javascript

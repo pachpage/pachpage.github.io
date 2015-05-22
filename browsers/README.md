@@ -12,7 +12,11 @@ javascript:(function(){if(document.location.href.indexOf('http')===0)document.lo
 ```
 ### Dolphin
 ```javascript
-javascript:if(location.href.substring(4,5)=='s'){location.href='dolphin://'+location.href.substring(5);}else{location.href='dolphin://'+location.href.substring(4);}`
+javascript:if(location.href.substring(4,5)=='s'){location.href='dolphin'+location.href.substring(5);}else{location.href='dolphin://'+location.href.substring(4);}
+```
+### Microsoft Intune Managed Browser
+```javascript
+javascript:if(location.href.substring(4,5)=='s'){location.href='https-intunemam'+location.href.substring(5);}else{location.href='http-intunemam'+location.href.substring(4);}
 ```
 ### Mercury
 ```javascript
